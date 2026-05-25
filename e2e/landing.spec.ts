@@ -1,12 +1,13 @@
 import { test, expect } from "@playwright/test";
+import { GAME_TITLE, PLAY_BUTTON, openLanding } from "./helpers.ts";
 
 test.describe("Landing page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
+    await openLanding(page);
   });
 
   test("shows game title", async ({ page }) => {
-    await expect(page.getByText("מִרְדָּף הַמִּלִּים")).toBeVisible();
+    await expect(page.getByText(GAME_TITLE)).toBeVisible();
   });
 
   test("shows all three difficulty cards", async ({ page }) => {
@@ -16,7 +17,7 @@ test.describe("Landing page", () => {
   });
 
   test("shows play button", async ({ page }) => {
-    await expect(page.getByText("התחילו לשחק")).toBeVisible();
+    await expect(page.getByText(PLAY_BUTTON)).toBeVisible();
   });
 
   test("selecting a difficulty card marks it active", async ({ page }) => {
@@ -29,7 +30,7 @@ test.describe("Landing page", () => {
   });
 
   test("clicking play navigates to /game", async ({ page }) => {
-    await page.getByText("התחילו לשחק").click();
+    await page.getByText(PLAY_BUTTON).click();
     await expect(page).toHaveURL("/game");
   });
 });
