@@ -1,12 +1,11 @@
-import { motion, AnimatePresence } from "motion/react";
-import { Play, Zap, Leaf, Flame, Monitor } from "lucide-react";
+import { motion } from "motion/react";
+import { Play, Zap, Leaf, Flame } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { RunningCharacter } from "../components/RunningCharacter.tsx";
 
 export default function Landing() {
   const [selectedSpeed, setSelectedSpeed] = useState(2);
-  const [showMobileWarning, setShowMobileWarning] = useState(false);
   const navigate = useNavigate();
 
   const speedLevels = [
@@ -53,10 +52,6 @@ export default function Landing() {
   ];
 
   const handlePlay = () => {
-    if (window.matchMedia("(max-width: 768px)").matches) {
-      setShowMobileWarning(true);
-      return;
-    }
     navigate("/game", {
       state: { difficulty: speedLevels[selectedSpeed - 1].name },
     });
@@ -312,44 +307,6 @@ export default function Landing() {
           </motion.div>
         </div>
       </div>
-
-      <AnimatePresence>
-        {showMobileWarning && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowMobileWarning(false)}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-6 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              onClick={(e) => e.stopPropagation()}
-              dir="rtl"
-              className="w-full max-w-sm rounded-3xl bg-white p-8 text-center shadow-2xl"
-            >
-              <div className="mb-5 flex justify-center">
-                <div className="rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 p-4">
-                  <Monitor className="h-10 w-10 text-violet-600" />
-                </div>
-              </div>
-              <h2 className="mb-3 text-2xl font-bold text-gray-900">המשחק פועל במחשב בלבד</h2>
-              <p className="mb-6 leading-relaxed text-gray-500">
-                כדי לשחק צריך מקלדת פיזית. פתחו את המשחק מהמחשב שלכם ותהנו!
-              </p>
-              <button
-                onClick={() => setShowMobileWarning(false)}
-                className="w-full rounded-2xl bg-gradient-to-l from-violet-600 to-indigo-600 py-3 font-bold text-white"
-              >
-                הבנתי
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

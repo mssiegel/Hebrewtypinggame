@@ -310,17 +310,14 @@ export default function Game() {
       {/* ── Status bar ── */}
       <div className="z-10 flex-shrink-0 border-b border-violet-100/60 bg-white/80 backdrop-blur-sm">
         <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
-          <button
-            onClick={() => navigate("/")}
-            className="flex flex-shrink-0 items-center gap-2 rounded-xl transition-opacity duration-150 hover:opacity-70"
-          >
+          <div className="flex flex-shrink-0 items-center gap-2">
             <div className="rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 p-2 text-white shadow">
               <Zap className="h-4 w-4" fill="currentColor" />
             </div>
             <span className="hidden bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-sm font-bold whitespace-nowrap text-transparent sm:inline">
               מִרְדָּף הַמִּלִּים
             </span>
-          </button>
+          </div>
 
           <div className="flex flex-wrap items-center justify-end gap-1.5">
             <div
