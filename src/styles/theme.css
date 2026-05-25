@@ -2,7 +2,7 @@
 
 :root {
   --font-size: 16px;
-  
+
   /* Playful, energetic color palette for a teen-friendly typing game */
   --background: #fafbff;
   --foreground: #1a1d2e;
@@ -10,43 +10,43 @@
   --card-foreground: #1a1d2e;
   --popover: #ffffff;
   --popover-foreground: #1a1d2e;
-  
+
   /* Primary: Vibrant purple/blue for main CTAs */
   --primary: #6366f1;
   --primary-foreground: #ffffff;
-  
+
   /* Secondary: Soft pink/coral accent */
   --secondary: #fef3f2;
   --secondary-foreground: #1a1d2e;
-  
+
   --muted: #f3f4f6;
   --muted-foreground: #6b7280;
   --accent: #e0e7ff;
   --accent-foreground: #4338ca;
-  
+
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  
+
   --border: rgba(99, 102, 241, 0.12);
   --input: transparent;
   --input-background: #f9fafb;
   --switch-background: #d1d5db;
-  
+
   --font-weight-medium: 600;
   --font-weight-normal: 400;
-  
+
   --ring: #a5b4fc;
-  
+
   /* Vibrant chart colors for game elements */
   --chart-1: #f59e0b;
   --chart-2: #10b981;
   --chart-3: #6366f1;
   --chart-4: #ec4899;
   --chart-5: #8b5cf6;
-  
+
   /* Rounded, playful radius */
   --radius: 1rem;
-  
+
   --sidebar: #ffffff;
   --sidebar-foreground: #1a1d2e;
   --sidebar-primary: #6366f1;
@@ -142,7 +142,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Rubik', sans-serif;
+    font-family: "Rubik", sans-serif;
   }
 
   /**

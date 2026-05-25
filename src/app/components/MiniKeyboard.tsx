@@ -18,7 +18,7 @@ export function MiniKeyboard({ nextChar, wrongChar, difficulty }: MiniKeyboardPr
   const pulse = difficulty === "מתחיל";
 
   return (
-    <div className="flex flex-col items-center gap-[3px] bg-white/70 backdrop-blur-sm rounded-2xl border border-violet-100/80 px-3 py-2 shadow-lg shadow-violet-100/40">
+    <div className="flex flex-col items-center gap-[3px] rounded-2xl border border-violet-100/80 bg-white/70 px-3 py-2 shadow-lg shadow-violet-100/40 backdrop-blur-sm">
       {ROWS.map((row, ri) => (
         <div key={ri} className="flex gap-[3px]">
           {row.map((char) => (
@@ -55,7 +55,7 @@ function Key({
   if (isWrong) {
     return (
       <motion.div
-        className={`${base} bg-rose-100 border border-rose-400 text-rose-600`}
+        className={`${base} border border-rose-400 bg-rose-100 text-rose-600`}
         initial={{ scale: 1 }}
         animate={{ scale: [1, 1.15, 1] }}
         transition={{ duration: 0.25, ease: "easeOut" }}
@@ -90,10 +90,7 @@ function Key({
     }
 
     return (
-      <div
-        className={nextClass}
-        style={{ boxShadow: "0 0 12px rgba(52,211,153,0.65)" }}
-      >
+      <div className={nextClass} style={{ boxShadow: "0 0 12px rgba(52,211,153,0.65)" }}>
         {char}
       </div>
     );
@@ -102,7 +99,7 @@ function Key({
   // Default key — muted violet
   return (
     <div
-      className={`${base} bg-violet-50 border border-violet-200 text-violet-500`}
+      className={`${base} border border-violet-200 bg-violet-50 text-violet-500`}
       style={{ boxShadow: "0 2px 0 rgba(99,102,241,0.18)" }}
     >
       {char}

@@ -60,14 +60,14 @@ export default function Landing() {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 overflow-hidden"
+      className="min-h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50"
     >
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-16 right-16 w-72 h-72 bg-gradient-to-br from-violet-300/20 to-purple-300/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-16 left-16 w-96 h-96 bg-gradient-to-br from-pink-300/20 to-rose-300/20 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute top-16 right-16 h-72 w-72 rounded-full bg-gradient-to-br from-violet-300/20 to-purple-300/20 blur-3xl" />
+        <div className="absolute bottom-16 left-16 h-96 w-96 rounded-full bg-gradient-to-br from-pink-300/20 to-rose-300/20 blur-3xl" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-6 py-12 lg:py-20">
+      <div className="relative mx-auto max-w-7xl px-6 py-12 lg:py-20">
         <header className="mb-14">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -75,16 +75,16 @@ export default function Landing() {
             transition={{ duration: 0.6 }}
             className="flex items-center justify-center gap-3"
           >
-            <div className="bg-gradient-to-br from-violet-500 to-indigo-600 text-white p-3 rounded-2xl shadow-lg">
-              <Zap className="w-6 h-6" fill="currentColor" />
+            <div className="rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 p-3 text-white shadow-lg">
+              <Zap className="h-6 w-6" fill="currentColor" />
             </div>
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+            <h3 className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-2xl font-bold text-transparent">
               מִרְדָּף הַמִּלִּים
             </h3>
           </motion.div>
         </header>
 
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Right column: content */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -97,7 +97,7 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.3 }}
-                className="text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight"
+                className="text-5xl leading-tight font-bold lg:text-6xl xl:text-7xl"
               >
                 <span className="bg-gradient-to-l from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
                   תַּקְלִידוּ בְּעִבְרִית.
@@ -112,10 +112,10 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.4 }}
-                className="text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-xl"
+                className="max-w-xl text-xl leading-relaxed text-gray-600 lg:text-2xl"
               >
-                משחק הקלדה פשוט וכיפי שעוזר לכם להשתפר בעברית, מילה אחרי מילה.
-                בלי לחץ, רק אתם והמקלדת.
+                משחק הקלדה פשוט וכיפי שעוזר לכם להשתפר בעברית, מילה אחרי מילה. בלי לחץ, רק אתם
+                והמקלדת.
               </motion.p>
             </div>
 
@@ -127,12 +127,12 @@ export default function Landing() {
             >
               <button
                 onClick={handlePlay}
-                className="group relative px-8 py-4 bg-gradient-to-l from-violet-600 to-indigo-600 text-white rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
+                className="group relative transform overflow-hidden rounded-2xl bg-gradient-to-l from-violet-600 to-indigo-600 px-8 py-4 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
               >
-                <div className="absolute inset-0 bg-gradient-to-l from-violet-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-l from-violet-700 to-indigo-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 <span className="relative flex items-center gap-2">
                   התחילו לשחק
-                  <Play className="w-5 h-5" fill="currentColor" />
+                  <Play className="h-5 w-5" fill="currentColor" />
                 </span>
               </button>
             </motion.div>
@@ -144,7 +144,7 @@ export default function Landing() {
               transition={{ duration: 0.7, delay: 0.6 }}
               className="space-y-3"
             >
-              <p className="text-sm font-semibold text-gray-500 tracking-wide">
+              <p className="text-sm font-semibold tracking-wide text-gray-500">
                 בחרו את הקצב שלכם:
               </p>
               <div className="grid grid-cols-3 gap-3">
@@ -160,28 +160,25 @@ export default function Landing() {
                       className="relative cursor-pointer"
                     >
                       {"badge" in level && isSelected && (
-                        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 bg-orange-500 text-white text-xs font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap">
+                        <div className="absolute -top-2.5 left-1/2 z-10 -translate-x-1/2 rounded-full bg-orange-500 px-2.5 py-0.5 text-xs font-bold whitespace-nowrap text-white">
                           {level.badge}
                         </div>
                       )}
                       <div
-                        className={`
-                          bg-white rounded-2xl p-4 text-center space-y-2 shadow-md
-                          border-2 transition-all duration-250
-                          ${isSelected
-                            ? `${level.activeBorder} ${level.activeBg} scale-105 -translate-y-1 shadow-xl`
-                            : "border-gray-100 hover:scale-105 hover:-translate-y-0.5 hover:shadow-lg"
-                          }
-                        `}
+                        className={`space-y-2 rounded-2xl border-2 bg-white p-4 text-center shadow-md transition-all duration-250 ${
+                          isSelected
+                            ? `${level.activeBorder} ${level.activeBg} -translate-y-1 scale-105 shadow-xl`
+                            : "border-gray-100 hover:-translate-y-0.5 hover:scale-105 hover:shadow-lg"
+                        } `}
                       >
                         <div
-                          className={`inline-flex p-2 rounded-xl transition-colors duration-200 ${
+                          className={`inline-flex rounded-xl p-2 transition-colors duration-200 ${
                             isSelected ? level.activeBg : "bg-gray-50"
                           }`}
                         >
-                          <level.icon className={`w-5 h-5 ${level.iconColor}`} />
+                          <level.icon className={`h-5 w-5 ${level.iconColor}`} />
                         </div>
-                        <h3 className="font-bold text-gray-900 text-base leading-none">
+                        <h3 className="text-base leading-none font-bold text-gray-900">
                           {level.name}
                         </h3>
                         <p className="text-xs text-gray-500">{level.wpm}</p>
@@ -200,11 +197,11 @@ export default function Landing() {
             transition={{ duration: 0.7, delay: 0.4 }}
             className="relative"
           >
-            <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-violet-200">
+            <div className="relative overflow-hidden rounded-3xl border-4 border-violet-200 bg-white shadow-2xl">
               {/* Game screen */}
-              <div className="relative h-[320px] bg-gradient-to-b from-sky-200 via-sky-100 to-indigo-100 overflow-hidden">
-                <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-teal-300/70 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 h-5 bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-400" />
+              <div className="relative h-[320px] overflow-hidden bg-gradient-to-b from-sky-200 via-sky-100 to-indigo-100">
+                <div className="absolute right-0 bottom-0 left-0 h-20 bg-gradient-to-t from-teal-300/70 to-transparent" />
+                <div className="absolute right-0 bottom-0 left-0 h-5 bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-400" />
 
                 {floatingWords.map((word, index) => (
                   <motion.div
@@ -220,16 +217,28 @@ export default function Landing() {
                     style={{ top: word.top, right: word.right }}
                   >
                     <div className="relative">
-                      <div className="bg-white rounded-xl px-4 py-2 shadow-md border border-violet-200">
+                      <div className="rounded-xl border border-violet-200 bg-white px-4 py-2 shadow-md">
                         <span className="text-xl font-bold text-gray-900">{word.text}</span>
                       </div>
 
                       {/* Speed lines — same as game word pill, trailing to the right */}
-                      <div className="absolute top-1/2 -translate-y-1/2 left-full pl-2 flex flex-col gap-[5px] pointer-events-none">
+                      <div className="pointer-events-none absolute top-1/2 left-full flex -translate-y-1/2 flex-col gap-[5px] pl-2">
                         {[
-                          { w: 14, delay: 0,   opacity: [0.7, 0.12, 0.7] as [number, number, number] },
-                          { w: 20, delay: 0.1, opacity: [0.5, 0.08, 0.5] as [number, number, number] },
-                          { w: 11, delay: 0.2, opacity: [0.3, 0.05, 0.3] as [number, number, number] },
+                          {
+                            w: 14,
+                            delay: 0,
+                            opacity: [0.7, 0.12, 0.7] as [number, number, number],
+                          },
+                          {
+                            w: 20,
+                            delay: 0.1,
+                            opacity: [0.5, 0.08, 0.5] as [number, number, number],
+                          },
+                          {
+                            w: 11,
+                            delay: 0.2,
+                            opacity: [0.3, 0.05, 0.3] as [number, number, number],
+                          },
                         ].map((line, i) => (
                           <motion.div
                             key={i}
@@ -240,7 +249,7 @@ export default function Landing() {
                               delay: line.delay + word.delay,
                               ease: "easeInOut",
                             }}
-                            className="h-[2px] bg-violet-300/70 rounded-full origin-right"
+                            className="h-[2px] origin-right rounded-full bg-violet-300/70"
                             style={{ width: line.w }}
                           />
                         ))}
@@ -261,36 +270,36 @@ export default function Landing() {
               </div>
 
               {/* Typing input row */}
-              <div className="px-5 py-3 bg-white border-t border-gray-100">
-                <div className="bg-gray-50 rounded-xl px-4 py-2.5 border border-gray-200 flex items-center gap-1.5">
+              <div className="border-t border-gray-100 bg-white px-5 py-3">
+                <div className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5">
                   <motion.span
                     animate={{ opacity: [1, 0, 1] }}
                     transition={{ duration: 1.1, repeat: Infinity }}
-                    className="inline-block w-0.5 h-4 bg-violet-500 rounded flex-shrink-0"
+                    className="inline-block h-4 w-0.5 flex-shrink-0 rounded bg-violet-500"
                   />
                   <span className="text-base text-gray-400">הקלד כאן...</span>
                 </div>
               </div>
 
               {/* Blurred keyboard */}
-              <div className="px-3 pb-4 pt-2 bg-[#d1d5db] select-none pointer-events-none">
-                <div className="space-y-1.5 blur-[1.5px] opacity-90">
+              <div className="pointer-events-none bg-[#d1d5db] px-3 pt-2 pb-4 select-none">
+                <div className="space-y-1.5 opacity-90 blur-[1.5px]">
                   {keyboardRows.map((row, rowIndex) => (
-                    <div key={rowIndex} className="flex gap-1 justify-center">
+                    <div key={rowIndex} className="flex justify-center gap-1">
                       {row.map((key, keyIndex) => (
                         <div
                           key={`${rowIndex}-${keyIndex}`}
-                          className="flex-1 max-w-[34px] h-[42px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.35)] flex items-center justify-center text-[13px] font-normal text-gray-800"
+                          className="flex h-[42px] max-w-[34px] flex-1 items-center justify-center rounded-[6px] bg-white text-[13px] font-normal text-gray-800 shadow-[0_1px_0_rgba(0,0,0,0.35)]"
                         >
                           {key}
                         </div>
                       ))}
                     </div>
                   ))}
-                  <div className="flex gap-1 justify-center">
-                    <div className="w-[44px] h-[42px] bg-[#adb5bd] rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.35)]" />
-                    <div className="flex-1 h-[42px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.35)]" />
-                    <div className="w-[84px] h-[42px] bg-[#adb5bd] rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.35)]" />
+                  <div className="flex justify-center gap-1">
+                    <div className="h-[42px] w-[44px] rounded-[6px] bg-[#adb5bd] shadow-[0_1px_0_rgba(0,0,0,0.35)]" />
+                    <div className="h-[42px] flex-1 rounded-[6px] bg-white shadow-[0_1px_0_rgba(0,0,0,0.35)]" />
+                    <div className="h-[42px] w-[84px] rounded-[6px] bg-[#adb5bd] shadow-[0_1px_0_rgba(0,0,0,0.35)]" />
                   </div>
                 </div>
               </div>

@@ -38,7 +38,7 @@ export function RunningCharacter({ scared = false, scale = 1 }: RunningCharacter
       <motion.div
         animate={{ scaleX: [1, 0.65, 1] }}
         transition={{ duration: 0.4, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full blur-sm bg-violet-900/20"
+        className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-violet-900/20 blur-sm"
         style={{ width: shadowW, height: Math.round(12 * scale) }}
       />
 
@@ -58,7 +58,7 @@ export function RunningCharacter({ scared = false, scale = 1 }: RunningCharacter
         >
           {/* Left eye */}
           <div
-            className="absolute bg-white rounded-full flex items-center justify-center shadow-sm"
+            className="absolute flex items-center justify-center rounded-full bg-white shadow-sm"
             style={{ width: eyeSize, height: eyeSize, top: eyeTop, left: eyeInset }}
           >
             <div
@@ -68,7 +68,7 @@ export function RunningCharacter({ scared = false, scale = 1 }: RunningCharacter
           </div>
           {/* Right eye */}
           <div
-            className="absolute bg-white rounded-full flex items-center justify-center shadow-sm"
+            className="absolute flex items-center justify-center rounded-full bg-white shadow-sm"
             style={{ width: eyeSize, height: eyeSize, top: eyeTop, right: eyeInset }}
           >
             <div
@@ -80,12 +80,16 @@ export function RunningCharacter({ scared = false, scale = 1 }: RunningCharacter
           {/* Mouth */}
           {scared ? (
             <div
-              className="absolute left-1/2 -translate-x-1/2 border-t-2 border-white/90 rounded-t-full"
-              style={{ top: mouthTop, width: Math.round(mouthW * 0.9), height: Math.round(mouthH * 0.9) }}
+              className="absolute left-1/2 -translate-x-1/2 rounded-t-full border-t-2 border-white/90"
+              style={{
+                top: mouthTop,
+                width: Math.round(mouthW * 0.9),
+                height: Math.round(mouthH * 0.9),
+              }}
             />
           ) : (
             <div
-              className="absolute left-1/2 -translate-x-1/2 border-b-2 border-white/90 rounded-b-full"
+              className="absolute left-1/2 -translate-x-1/2 rounded-b-full border-b-2 border-white/90"
               style={{ top: mouthTop, width: mouthW, height: mouthH }}
             />
           )}
@@ -94,7 +98,7 @@ export function RunningCharacter({ scared = false, scale = 1 }: RunningCharacter
           <motion.div
             animate={{ rotate: [-28, 28, -28] }}
             transition={{ duration: 0.4, repeat: Infinity }}
-            className={`absolute rounded-full origin-right transition-colors duration-200 ${
+            className={`absolute origin-right rounded-full transition-colors duration-200 ${
               scared ? "bg-red-300" : "bg-violet-400"
             }`}
             style={{ top: armTop, left: -armOut, width: armW, height: armH }}
@@ -103,7 +107,7 @@ export function RunningCharacter({ scared = false, scale = 1 }: RunningCharacter
           <motion.div
             animate={{ rotate: [28, -28, 28] }}
             transition={{ duration: 0.4, repeat: Infinity }}
-            className={`absolute rounded-full origin-left transition-colors duration-200 ${
+            className={`absolute origin-left rounded-full transition-colors duration-200 ${
               scared ? "bg-rose-400" : "bg-indigo-500"
             }`}
             style={{ top: armTop, right: -armOut, width: armW, height: armH }}
@@ -115,13 +119,13 @@ export function RunningCharacter({ scared = false, scale = 1 }: RunningCharacter
           <motion.div
             animate={{ y: [0, Math.round(-8 * scale), 0] }}
             transition={{ duration: 0.4, repeat: Infinity }}
-            className="bg-indigo-700 rounded-full"
+            className="rounded-full bg-indigo-700"
             style={{ width: legW, height: legH }}
           />
           <motion.div
             animate={{ y: [Math.round(-8 * scale), 0, Math.round(-8 * scale)] }}
             transition={{ duration: 0.4, repeat: Infinity }}
-            className="bg-indigo-700 rounded-full"
+            className="rounded-full bg-indigo-700"
             style={{ width: legW, height: legH }}
           />
         </div>
@@ -131,19 +135,19 @@ export function RunningCharacter({ scared = false, scale = 1 }: RunningCharacter
       <motion.div
         animate={{ x: [0, Math.round(-14 * scale), 0], opacity: [0.85, 0, 0.85] }}
         transition={{ duration: 0.4, repeat: Infinity }}
-        className="absolute bg-violet-300/80 rounded-full"
+        className="absolute rounded-full bg-violet-300/80"
         style={{ top: lineTop1, left: -lineLeft, width: lineW1, height: Math.round(3 * scale) }}
       />
       <motion.div
         animate={{ x: [0, Math.round(-11 * scale), 0], opacity: [0.55, 0, 0.55] }}
         transition={{ duration: 0.4, repeat: Infinity, delay: 0.13 }}
-        className="absolute bg-violet-200/70 rounded-full"
+        className="absolute rounded-full bg-violet-200/70"
         style={{ top: lineTop2, left: -lineLeft, width: lineW2, height: Math.round(2 * scale) }}
       />
       <motion.div
         animate={{ x: [0, Math.round(-9 * scale), 0], opacity: [0.35, 0, 0.35] }}
         transition={{ duration: 0.4, repeat: Infinity, delay: 0.24 }}
-        className="absolute bg-violet-200/50 rounded-full"
+        className="absolute rounded-full bg-violet-200/50"
         style={{ top: lineTop3, left: -lineLeft, width: lineW3, height: Math.round(2 * scale) }}
       />
     </div>
