@@ -1,11 +1,12 @@
-import { motion } from "motion/react";
-import { Play, Zap, Leaf, Flame } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { Play, Zap, Leaf, Flame, Monitor } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { RunningCharacter } from "../components/RunningCharacter.tsx";
 
 export default function Landing() {
   const [selectedSpeed, setSelectedSpeed] = useState(2);
+  const [showMobileWarning, setShowMobileWarning] = useState(false);
   const navigate = useNavigate();
 
   const speedLevels = [
@@ -52,6 +53,10 @@ export default function Landing() {
   ];
 
   const handlePlay = () => {
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      setShowMobileWarning(true);
+      return;
+    }
     navigate("/game", {
       state: { difficulty: speedLevels[selectedSpeed - 1].name },
     });
@@ -114,8 +119,8 @@ export default function Landing() {
                 transition={{ duration: 0.7, delay: 0.4 }}
                 className="max-w-xl text-xl leading-relaxed text-gray-600 lg:text-2xl"
               >
-                משחק הקלדה פשוט וכיפי שעוזר לכם להשתפר בעברית, מילה אחרי מילה. בלי לחץ, רק אתם
-                והמקלדת.
+                משחק הקלדה פשוט וכיפי שעוזר לכם להשתפר בעברית, מילה אחרי מילה.
+                בלי לחץ, רק אתם והמקלדת.
               </motion.p>
             </div>
 
@@ -176,7 +181,9 @@ export default function Landing() {
                             isSelected ? level.activeBg : "bg-gray-50"
                           }`}
                         >
-                          <level.icon className={`h-5 w-5 ${level.iconColor}`} />
+                          <level.icon
+                            className={`h-5 w-5 ${level.iconColor}`}
+                          />
                         </div>
                         <h3 className="text-base leading-none font-bold text-gray-900">
                           {level.name}
@@ -211,14 +218,21 @@ export default function Landing() {
                     transition={{
                       duration: 0.6,
                       delay: word.delay,
-                      y: { duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: word.delay },
+                      y: {
+                        duration: 2.8,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: word.delay,
+                      },
                     }}
                     className="absolute"
                     style={{ top: word.top, right: word.right }}
                   >
                     <div className="relative">
                       <div className="rounded-xl border border-violet-200 bg-white px-4 py-2 shadow-md">
-                        <span className="text-xl font-bold text-gray-900">{word.text}</span>
+                        <span className="text-xl font-bold text-gray-900">
+                          {word.text}
+                        </span>
                       </div>
 
                       {/* Speed lines — same as game word pill, trailing to the right */}
@@ -227,22 +241,37 @@ export default function Landing() {
                           {
                             w: 14,
                             delay: 0,
-                            opacity: [0.7, 0.12, 0.7] as [number, number, number],
+                            opacity: [0.7, 0.12, 0.7] as [
+                              number,
+                              number,
+                              number,
+                            ],
                           },
                           {
                             w: 20,
                             delay: 0.1,
-                            opacity: [0.5, 0.08, 0.5] as [number, number, number],
+                            opacity: [0.5, 0.08, 0.5] as [
+                              number,
+                              number,
+                              number,
+                            ],
                           },
                           {
                             w: 11,
                             delay: 0.2,
-                            opacity: [0.3, 0.05, 0.3] as [number, number, number],
+                            opacity: [0.3, 0.05, 0.3] as [
+                              number,
+                              number,
+                              number,
+                            ],
                           },
                         ].map((line, i) => (
                           <motion.div
                             key={i}
-                            animate={{ opacity: line.opacity, scaleX: [1, 0.5, 1] }}
+                            animate={{
+                              opacity: line.opacity,
+                              scaleX: [1, 0.5, 1],
+                            }}
                             transition={{
                               duration: 0.45 + i * 0.08,
                               repeat: Infinity,
@@ -307,6 +336,46 @@ export default function Landing() {
           </motion.div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showMobileWarning && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowMobileWarning(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-6 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              onClick={(e) => e.stopPropagation()}
+              dir="rtl"
+              className="w-full max-w-sm rounded-3xl bg-white p-8 text-center shadow-2xl"
+            >
+              <div className="mb-5 flex justify-center">
+                <div className="rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 p-4">
+                  <Monitor className="h-10 w-10 text-violet-600" />
+                </div>
+              </div>
+              <h2 className="mb-3 text-2xl font-bold text-gray-900">
+                המשחק פועל במחשב בלבד
+              </h2>
+              <p className="mb-6 leading-relaxed text-gray-500">
+                כדי לשחק צריך מקלדת פיזית. פתחו את המשחק מהמחשב שלכם ותהנו!
+              </p>
+              <button
+                onClick={() => setShowMobileWarning(false)}
+                className="w-full rounded-2xl bg-gradient-to-l from-violet-600 to-indigo-600 py-3 font-bold text-white"
+              >
+                הבנתי
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -19,13 +19,23 @@ function WordPill({
   typed: string;
 }) {
   // Shrink font for longer groups
-  const fontSize = group.length >= 4 ? "text-2xl" : group.length >= 2 ? "text-3xl" : "text-4xl";
+  const fontSize =
+    group.length >= 4
+      ? "text-2xl"
+      : group.length >= 2
+        ? "text-3xl"
+        : "text-4xl";
 
   return (
     <div>
       <motion.div
         animate={{ y: [0, -8, 0] }}
-        transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+        transition={{
+          duration: 2.8,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 0.3,
+        }}
       >
         <div className="relative">
           {/* Glow */}
@@ -54,7 +64,10 @@ function WordPill({
                               ? "text-violet-600"
                               : "text-red-500";
                         return (
-                          <span key={ci} className={`transition-colors duration-100 ${cls}`}>
+                          <span
+                            key={ci}
+                            className={`transition-colors duration-100 ${cls}`}
+                          >
                             {char}
                           </span>
                         );
@@ -68,7 +81,9 @@ function WordPill({
 
                 {/* Separator dot between words (not after last) */}
                 {wi < group.length - 1 && (
-                  <span className="text-lg font-bold text-violet-200 select-none">·</span>
+                  <span className="text-lg font-bold text-violet-200 select-none">
+                    ·
+                  </span>
                 )}
               </span>
             ))}
@@ -100,7 +115,12 @@ function WordPill({
         {/* Floating shadow */}
         <motion.div
           animate={{ scaleX: [1, 0.72, 1], opacity: [0.22, 0.08, 0.22] }}
-          transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+          transition={{
+            duration: 2.8,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.3,
+          }}
           className="mx-auto mt-2 h-3 w-3/4 rounded-full bg-violet-400/30 blur-md"
         />
       </motion.div>
@@ -110,7 +130,11 @@ function WordPill({
 
 // ─── Countdown overlay ────────────────────────────────────────
 function CountdownOverlay({ countdown }: { countdown: number }) {
-  const labels: Record<number, string> = { 3: "מוכנים?", 2: "התכוננו...", 1: "עוד שנייה!" };
+  const labels: Record<number, string> = {
+    3: "מוכנים?",
+    2: "התכוננו...",
+    1: "עוד שנייה!",
+  };
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -130,9 +154,13 @@ function CountdownOverlay({ countdown }: { countdown: number }) {
             className="flex flex-col items-center gap-5"
           >
             <div className="flex h-36 w-36 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 shadow-2xl ring-8 ring-violet-200/60">
-              <span className="text-7xl leading-none font-bold text-white">{countdown}</span>
+              <span className="text-7xl leading-none font-bold text-white">
+                {countdown}
+              </span>
             </div>
-            <p className="text-xl font-semibold text-violet-500">{labels[countdown]}</p>
+            <p className="text-xl font-semibold text-violet-500">
+              {labels[countdown]}
+            </p>
           </motion.div>
         ) : (
           <motion.div
@@ -182,7 +210,13 @@ function ResultsOverlay({
   onHome: () => void;
 }) {
   const grade =
-    wpm >= 40 ? "מדהים!" : wpm >= 25 ? "כל הכבוד!" : wpm >= 10 ? "לא רע!" : "המשיכו להתאמן!";
+    wpm >= 40
+      ? "מדהים!"
+      : wpm >= 25
+        ? "כל הכבוד!"
+        : wpm >= 10
+          ? "לא רע!"
+          : "המשיכו להתאמן!";
 
   useEffect(() => {
     const target = DIFFICULTY_TARGET[difficulty] ?? 10;
@@ -196,7 +230,16 @@ function ResultsOverlay({
     if (ratio >= 2.0) {
       // Exceptional — double burst
       confetti({ particleCount: 160, spread: 80, origin, colors });
-      setTimeout(() => confetti({ particleCount: 100, spread: 100, origin: { y: 0.4 }, colors }), 300);
+      setTimeout(
+        () =>
+          confetti({
+            particleCount: 100,
+            spread: 100,
+            origin: { y: 0.4 },
+            colors,
+          }),
+        300,
+      );
     } else if (ratio >= 1.5) {
       confetti({ particleCount: 120, spread: 75, origin, colors });
     } else if (ratio >= 1.0) {
@@ -217,13 +260,23 @@ function ResultsOverlay({
       <motion.div
         initial={{ scale: 0.82, opacity: 0, y: 24 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        transition={{ type: "spring", stiffness: 260, damping: 22, delay: 0.08 }}
+        transition={{
+          type: "spring",
+          stiffness: 260,
+          damping: 22,
+          delay: 0.08,
+        }}
         className="mx-4 w-full max-w-sm rounded-3xl border-2 border-violet-200 bg-white p-8 text-center shadow-2xl"
       >
         <motion.div
           initial={{ rotate: -20, scale: 0 }}
           animate={{ rotate: 0, scale: 1 }}
-          transition={{ type: "spring", stiffness: 300, damping: 14, delay: 0.18 }}
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 14,
+            delay: 0.18,
+          }}
           className="mb-2 block text-6xl"
         >
           🏆
@@ -234,15 +287,25 @@ function ResultsOverlay({
         <div className="mb-7 grid grid-cols-3 gap-3">
           <div className="rounded-2xl border border-violet-100 bg-violet-50 p-3.5">
             <div className="text-2xl font-bold text-violet-700">{wpm}</div>
-            <div className="mt-0.5 text-xs font-medium text-violet-400">מ/ד</div>
+            <div className="mt-0.5 text-xs font-medium text-violet-400">
+              מ/ד
+            </div>
           </div>
           <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-3.5">
-            <div className="text-2xl font-bold text-emerald-700">{accuracy}%</div>
-            <div className="mt-0.5 text-xs font-medium text-emerald-400">דיוק</div>
+            <div className="text-2xl font-bold text-emerald-700">
+              {accuracy}%
+            </div>
+            <div className="mt-0.5 text-xs font-medium text-emerald-400">
+              דיוק
+            </div>
           </div>
           <div className="rounded-2xl border border-pink-100 bg-pink-50 p-3.5">
-            <div className="text-2xl font-bold text-pink-700">{wordsCompleted}</div>
-            <div className="mt-0.5 text-xs font-medium text-pink-400">מילים</div>
+            <div className="text-2xl font-bold text-pink-700">
+              {wordsCompleted}
+            </div>
+            <div className="mt-0.5 text-xs font-medium text-pink-400">
+              מילים
+            </div>
           </div>
         </div>
 
@@ -310,14 +373,17 @@ export default function Game() {
       {/* ── Status bar ── */}
       <div className="z-10 flex-shrink-0 border-b border-violet-100/60 bg-white/80 backdrop-blur-sm">
         <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
-          <div className="flex flex-shrink-0 items-center gap-2">
+          <button
+            onClick={() => navigate("/")}
+            className="flex flex-shrink-0 items-center gap-2 rounded-xl transition-opacity duration-150 hover:opacity-70"
+          >
             <div className="rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 p-2 text-white shadow">
               <Zap className="h-4 w-4" fill="currentColor" />
             </div>
             <span className="hidden bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-sm font-bold whitespace-nowrap text-transparent sm:inline">
               מִרְדָּף הַמִּלִּים
             </span>
-          </div>
+          </button>
 
           <div className="flex flex-wrap items-center justify-end gap-1.5">
             <div
@@ -394,7 +460,11 @@ export default function Game() {
         {/* Mini keyboard — floats just above the grass, centered */}
         {phase === "playing" && (
           <div className="absolute bottom-[78px] left-1/2 z-[5] -translate-x-1/2">
-            <MiniKeyboard nextChar={nextChar} wrongChar={wrongChar} difficulty={difficulty} />
+            <MiniKeyboard
+              nextChar={nextChar}
+              wrongChar={wrongChar}
+              difficulty={difficulty}
+            />
           </div>
         )}
 
@@ -411,7 +481,11 @@ export default function Game() {
               scale: { duration: 5.5, ease: [0.25, 0.46, 0.45, 0.94] },
             }}
           >
-            <WordPill group={currentGroup} groupWordIdx={groupWordIdx} typed={inputValue} />
+            <WordPill
+              group={currentGroup}
+              groupWordIdx={groupWordIdx}
+              typed={inputValue}
+            />
           </motion.div>
         )}
 
@@ -456,7 +530,9 @@ export default function Game() {
           </AnimatePresence>
 
           <motion.div
-            animate={wrongKeyPressed ? { x: [-4, 4, -4, 4, -2, 2, 0] } : { x: 0 }}
+            animate={
+              wrongKeyPressed ? { x: [-4, 4, -4, 4, -2, 2, 0] } : { x: 0 }
+            }
             transition={{ duration: 0.32 }}
           >
             <input
