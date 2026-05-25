@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /game
 
-Sitemap: https://your-hebrew-typing-game-domain.com/sitemap.xml
+Sitemap: https://hebrewtypinggame.vercel.app/sitemap.xml
