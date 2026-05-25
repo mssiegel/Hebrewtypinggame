@@ -10,9 +10,10 @@
   "theme_color": "#6366f1",
   "icons": [
     {
-      "src": "/og-image.png",
-      "sizes": "1200x630",
-      "type": "image/png"
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }
