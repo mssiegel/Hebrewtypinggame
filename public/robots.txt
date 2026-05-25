@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /game
+
+Sitemap: https://your-hebrew-typing-game-domain.com/sitemap.xml

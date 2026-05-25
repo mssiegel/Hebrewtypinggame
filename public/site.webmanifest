@@ -1,0 +1,18 @@
+{
+  "name": "מִרְדָּף הַמִּלִּים",
+  "short_name": "מרדף המילים",
+  "description": "משחק הקלדה בעברית לשיפור מהירות ודיוק במקלדת עברית.",
+  "lang": "he-IL",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#eef2ff",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ]
+}
