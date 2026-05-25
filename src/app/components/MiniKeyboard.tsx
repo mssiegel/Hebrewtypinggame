@@ -6,6 +6,8 @@ const ROWS = [
   [".", ",", "ץ", "ת", "צ", "מ", "נ", "ה", "ב", "ס", "ז"],
 ];
 
+const HOME_KEYS = new Set(["ש", "ד", "ג", "כ", "ח", "ל", "ך", "ף"]);
+
 interface MiniKeyboardProps {
   nextChar: string;
   wrongChar: string | null;
@@ -27,6 +29,7 @@ export function MiniKeyboard({ nextChar, wrongChar, difficulty }: MiniKeyboardPr
               char={char}
               isNext={char === nextChar}
               isWrong={char === wrongChar}
+              isHomeKey={HOME_KEYS.has(char)}
               pulse={pulse}
             />
           ))}
@@ -41,11 +44,13 @@ function Key({
   char,
   isNext,
   isWrong,
+  isHomeKey,
   pulse,
 }: {
   char: string;
   isNext: boolean;
   isWrong: boolean;
+  isHomeKey: boolean;
   pulse: boolean;
 }) {
   const base =
@@ -97,9 +102,13 @@ function Key({
   }
 
   // Default key — muted violet
+  const defaultClass = isHomeKey
+    ? `${base} border border-amber-300 bg-amber-100 text-amber-900`
+    : `${base} border border-violet-200 bg-violet-50 text-violet-500`;
+
   return (
     <div
-      className={`${base} border border-violet-200 bg-violet-50 text-violet-500`}
+      className={defaultClass}
       style={{ boxShadow: "0 2px 0 rgba(99,102,241,0.18)" }}
     >
       {char}
