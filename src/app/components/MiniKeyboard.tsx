@@ -1,27 +1,29 @@
 import { motion } from "motion/react";
+import { translations } from "../../lib/translations.ts";
+import { type Language } from "../../lib/types.ts";
 
-const ROWS = [
-  ["פ", "ם", "ן", "ו", "ט", "א", "ר", "ק", "'", "/"],
-  ["ף", "ך", "ל", "ח", "י", "ע", "כ", "ג", "ד", "ש"],
-  [".", ",", "ץ", "ת", "צ", "מ", "נ", "ה", "ב", "ס", "ז"],
-];
-
-const HOME_KEYS = new Set(["ש", "ד", "ג", "כ", "ח", "ל", "ך", "ף"]);
+const HOME_KEYS: Record<Language, Set<string>> = {
+  he: new Set(["ש", "ד", "ג", "כ", "ח", "ל", "ך", "ף"]),
+  en: new Set(["a", "s", "d", "f", "j", "k", "l"]),
+};
 
 interface MiniKeyboardProps {
   nextChar: string;
   wrongChar: string | null;
   difficulty: string;
+  language: Language;
 }
 
-export function MiniKeyboard({ nextChar, wrongChar, difficulty }: MiniKeyboardProps) {
-  if (difficulty === "מהיר") return null;
+export function MiniKeyboard({ nextChar, wrongChar, difficulty, language }: MiniKeyboardProps) {
+  if (difficulty === "hard" || difficulty === "מהיר") return null;
 
-  const pulse = difficulty === "מתחיל";
+  const pulse = difficulty === "easy" || difficulty === "מתחיל";
+  const rows = translations[language].keyboardRows;
+  const homeKeys = HOME_KEYS[language];
 
   return (
     <div className="flex flex-col items-center gap-[3px] rounded-2xl border border-violet-100/80 bg-white/70 px-3 py-2 shadow-lg shadow-violet-100/40 backdrop-blur-sm">
-      {ROWS.map((row, ri) => (
+      {rows.map((row, ri) => (
         <div key={ri} className="flex gap-[3px]">
           {row.map((char) => (
             <Key
@@ -29,7 +31,7 @@ export function MiniKeyboard({ nextChar, wrongChar, difficulty }: MiniKeyboardPr
               char={char}
               isNext={char === nextChar}
               isWrong={char === wrongChar}
-              isHomeKey={HOME_KEYS.has(char)}
+              isHomeKey={homeKeys.has(char)}
               pulse={pulse}
             />
           ))}

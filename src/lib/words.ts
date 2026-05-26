@@ -1,3 +1,6 @@
+import { DEFAULT_LANGUAGE, normalizeDifficultyId } from "./language.ts";
+import { type Language } from "./types.ts";
+
 export const WORD_BANK = [
   "חבר",
   "שלום",
@@ -73,6 +76,81 @@ export const WORD_BANK = [
   "נר",
 ];
 
+export const ENGLISH_WORD_BANK = [
+  "cat",
+  "dog",
+  "sun",
+  "moon",
+  "star",
+  "book",
+  "home",
+  "tree",
+  "river",
+  "water",
+  "bread",
+  "milk",
+  "apple",
+  "green",
+  "blue",
+  "black",
+  "white",
+  "red",
+  "small",
+  "big",
+  "happy",
+  "friend",
+  "school",
+  "class",
+  "dream",
+  "road",
+  "city",
+  "earth",
+  "wind",
+  "night",
+  "morning",
+  "evening",
+  "stone",
+  "chair",
+  "door",
+  "window",
+  "food",
+  "time",
+  "letter",
+  "ball",
+  "flower",
+  "cloud",
+  "song",
+  "day",
+  "hand",
+  "eye",
+  "heart",
+  "fish",
+  "bird",
+  "roof",
+  "wall",
+  "name",
+  "fire",
+  "light",
+  "garden",
+  "child",
+  "smile",
+  "table",
+  "paper",
+  "pencil",
+  "music",
+  "story",
+  "game",
+  "run",
+  "jump",
+  "play",
+  "read",
+  "write",
+  "think",
+  "learn",
+  "fast",
+  "slow",
+];
+
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -82,14 +160,15 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-export function makeGroups(difficulty: string): string[][] {
-  const words = shuffle(WORD_BANK);
+export function makeGroups(difficulty: string, language: Language = DEFAULT_LANGUAGE): string[][] {
+  const words = shuffle(language === "en" ? ENGLISH_WORD_BANK : WORD_BANK);
   const groups: string[][] = [];
   let i = 0;
+  const difficultyId = normalizeDifficultyId(difficulty);
   while (i < words.length) {
     let size = 1;
-    if (difficulty === "בינוני") size = Math.random() < 0.5 ? 2 : 3;
-    else if (difficulty === "מהיר") size = Math.random() < 0.5 ? 4 : 5;
+    if (difficultyId === "medium") size = Math.random() < 0.5 ? 2 : 3;
+    else if (difficultyId === "hard") size = Math.random() < 0.5 ? 4 : 5;
     const end = Math.min(i + size, words.length);
     groups.push(words.slice(i, end));
     i += size;

@@ -5,8 +5,19 @@ import { Zap, Home, RotateCcw } from "lucide-react";
 import confetti from "canvas-confetti";
 import { RunningCharacter } from "../components/RunningCharacter.tsx";
 import { MiniKeyboard } from "../components/MiniKeyboard.tsx";
+import { LanguageToggle } from "../components/LanguageToggle.tsx";
 import { useGameState } from "../../lib/useGameState.ts";
 import { GAME_DURATION } from "../../lib/constants.ts";
+import {
+  getEquivalentLanguagePath,
+  getHomePath,
+  getLanguageDirection,
+  getLanguageFromPathname,
+  normalizeDifficultyId,
+  persistLanguage,
+} from "../../lib/language.ts";
+import { translations } from "../../lib/translations.ts";
+import { type DifficultyId, type Language } from "../../lib/types.ts";
 
 // ─── Word pill ────────────────────────────────────────────────
 function WordPill({
@@ -129,12 +140,14 @@ function WordPill({
 }
 
 // ─── Countdown overlay ────────────────────────────────────────
-function CountdownOverlay({ countdown }: { countdown: number }) {
-  const labels: Record<number, string> = {
-    3: "מוכנים?",
-    2: "התכוננו...",
-    1: "עוד שנייה!",
-  };
+function CountdownOverlay({
+  countdown,
+  language,
+}: {
+  countdown: number;
+  language: Language;
+}) {
+  const copy = translations[language].game;
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -159,7 +172,7 @@ function CountdownOverlay({ countdown }: { countdown: number }) {
               </span>
             </div>
             <p className="text-xl font-semibold text-violet-500">
-              {labels[countdown]}
+              {copy.countdown[countdown]}
             </p>
           </motion.div>
         ) : (
@@ -172,7 +185,7 @@ function CountdownOverlay({ countdown }: { countdown: number }) {
             className="space-y-3 text-center"
           >
             <span className="block bg-gradient-to-r from-violet-600 via-purple-500 to-pink-500 bg-clip-text text-8xl font-bold text-transparent">
-              קדימה!
+              {copy.go}
             </span>
             <motion.div
               initial={{ scaleX: 0 }}
@@ -188,10 +201,10 @@ function CountdownOverlay({ countdown }: { countdown: number }) {
 }
 
 // ─── Results overlay ──────────────────────────────────────────
-const DIFFICULTY_TARGET: Record<string, number> = {
-  מתחיל: 10,
-  בינוני: 25,
-  מהיר: 50,
+const DIFFICULTY_TARGET: Record<DifficultyId, number> = {
+  easy: 10,
+  medium: 25,
+  hard: 50,
 };
 
 function ResultsOverlay({
@@ -199,27 +212,30 @@ function ResultsOverlay({
   accuracy,
   wordsCompleted,
   difficulty,
+  language,
   onRestart,
   onHome,
 }: {
   wpm: number;
   accuracy: number;
   wordsCompleted: number;
-  difficulty: string;
+  difficulty: DifficultyId;
+  language: Language;
   onRestart: () => void;
   onHome: () => void;
 }) {
+  const copy = translations[language].game;
   const grade =
     wpm >= 40
-      ? "מדהים!"
+      ? copy.grades.exceptional
       : wpm >= 25
-        ? "כל הכבוד!"
+        ? copy.grades.great
         : wpm >= 10
-          ? "לא רע!"
-          : "המשיכו להתאמן!";
+          ? copy.grades.good
+          : copy.grades.practice;
 
   useEffect(() => {
-    const target = DIFFICULTY_TARGET[difficulty] ?? 10;
+    const target = DIFFICULTY_TARGET[difficulty];
     const ratio = wpm / target;
 
     if (ratio < 0.5) return;
@@ -282,13 +298,13 @@ function ResultsOverlay({
           🏆
         </motion.div>
         <h2 className="mb-1 text-3xl font-bold text-gray-900">{grade}</h2>
-        <p className="mb-6 text-sm text-gray-400">סיימתם 60 שניות</p>
+        <p className="mb-6 text-sm text-gray-400">{copy.finished}</p>
 
         <div className="mb-7 grid grid-cols-3 gap-3">
           <div className="rounded-2xl border border-violet-100 bg-violet-50 p-3.5">
             <div className="text-2xl font-bold text-violet-700">{wpm}</div>
             <div className="mt-0.5 text-xs font-medium text-violet-400">
-              מ/ד
+              {copy.stats.wpm}
             </div>
           </div>
           <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-3.5">
@@ -296,7 +312,7 @@ function ResultsOverlay({
               {accuracy}%
             </div>
             <div className="mt-0.5 text-xs font-medium text-emerald-400">
-              דיוק
+              {copy.stats.accuracy}
             </div>
           </div>
           <div className="rounded-2xl border border-pink-100 bg-pink-50 p-3.5">
@@ -304,7 +320,7 @@ function ResultsOverlay({
               {wordsCompleted}
             </div>
             <div className="mt-0.5 text-xs font-medium text-pink-400">
-              מילים
+              {copy.stats.words}
             </div>
           </div>
         </div>
@@ -315,14 +331,14 @@ function ResultsOverlay({
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-l from-violet-600 to-indigo-600 px-6 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]"
           >
             <RotateCcw className="h-4 w-4" />
-            שחקו שוב
+            {copy.restart}
           </button>
           <button
             onClick={onHome}
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gray-100 px-6 py-3.5 text-base font-bold text-gray-700 transition-all duration-200 hover:bg-gray-200 active:scale-[0.98]"
           >
             <Home className="h-4 w-4" />
-            חזרה למסך הראשי
+            {copy.home}
           </button>
         </div>
       </motion.div>
@@ -334,7 +350,27 @@ function ResultsOverlay({
 export default function Game() {
   const navigate = useNavigate();
   const location = useLocation();
-  const difficulty = (location.state?.difficulty as string) ?? "מתחיל";
+  const language = getLanguageFromPathname(location.pathname);
+  const dir = getLanguageDirection(language);
+  const copy = translations[language];
+  const difficulty = normalizeDifficultyId(
+    location.state?.difficultyId ?? location.state?.difficulty,
+  );
+  const difficultyLabel =
+    copy.difficulties.find((item) => item.id === difficulty)?.name ??
+    copy.difficulties[0].name;
+
+  useEffect(() => {
+    document.title = copy.title;
+    document.documentElement.lang = language;
+  }, [copy.title, language]);
+
+  const handleLanguageChange = (nextLanguage: Language) => {
+    persistLanguage(nextLanguage);
+    navigate(getEquivalentLanguagePath(location.pathname, nextLanguage), {
+      state: { difficultyId: difficulty },
+    });
+  };
 
   const {
     phase,
@@ -357,7 +393,7 @@ export default function Game() {
     inputRef,
     handleKeyDown,
     handleRestart,
-  } = useGameState(difficulty);
+  } = useGameState(difficulty, language);
 
   const inputBorderClass = justSucceeded
     ? "border-emerald-400 bg-emerald-50 text-emerald-700"
@@ -367,25 +403,26 @@ export default function Game() {
 
   return (
     <div
-      dir="rtl"
+      dir={dir}
       className="flex h-screen flex-col overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50"
     >
       {/* ── Status bar ── */}
       <div className="z-10 flex-shrink-0 border-b border-violet-100/60 bg-white/80 backdrop-blur-sm">
         <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(getHomePath(language))}
             className="flex flex-shrink-0 items-center gap-2 rounded-xl transition-opacity duration-150 hover:opacity-70"
           >
             <div className="rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 p-2 text-white shadow">
               <Zap className="h-4 w-4" fill="currentColor" />
             </div>
             <span className="hidden bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-sm font-bold whitespace-nowrap text-transparent sm:inline">
-              מִרְדָּף הַמִּלִּים
+              {copy.gameTitle}
             </span>
           </button>
 
           <div className="flex flex-wrap items-center justify-end gap-1.5">
+            <LanguageToggle language={language} onChange={handleLanguageChange} />
             <div
               className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-bold transition-colors duration-500 ${
                 timeLeft < 10
@@ -400,7 +437,9 @@ export default function Game() {
             </div>
             <div className="flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-100 px-3 py-1 text-sm font-bold text-indigo-700">
               <span className="text-xs">⌨</span>
-              <span>{wpm} מ/ד</span>
+              <span>
+                {wpm} {copy.game.stats.wpm}
+              </span>
             </div>
             <div className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-700">
               <span className="text-xs">✓</span>
@@ -411,7 +450,7 @@ export default function Game() {
               <span>{wordsCompleted}</span>
             </div>
             <div className="flex items-center rounded-full border border-amber-200 bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-700">
-              {difficulty}
+              {difficultyLabel}
             </div>
           </div>
         </div>
@@ -464,6 +503,7 @@ export default function Game() {
               nextChar={nextChar}
               wrongChar={wrongChar}
               difficulty={difficulty}
+              language={language}
             />
           </div>
         )}
@@ -491,7 +531,9 @@ export default function Game() {
 
         {/* Countdown overlay */}
         <AnimatePresence>
-          {phase === "countdown" && <CountdownOverlay countdown={countdown} />}
+          {phase === "countdown" && (
+            <CountdownOverlay countdown={countdown} language={language} />
+          )}
         </AnimatePresence>
 
         {/* Results overlay */}
@@ -502,8 +544,9 @@ export default function Game() {
               accuracy={accuracy}
               wordsCompleted={wordsCompleted}
               difficulty={difficulty}
+              language={language}
               onRestart={handleRestart}
-              onHome={() => navigate("/")}
+              onHome={() => navigate(getHomePath(language))}
             />
           )}
         </AnimatePresence>
@@ -537,13 +580,13 @@ export default function Game() {
           >
             <input
               ref={inputRef}
-              dir="rtl"
+              dir={dir}
               type="text"
               value={inputValue}
               onChange={() => {}}
               onKeyDown={handleKeyDown}
               disabled={phase !== "playing"}
-              placeholder={phase === "playing" ? "הקלידו כאן..." : ""}
+              placeholder={phase === "playing" ? copy.game.inputPlaceholder : ""}
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
@@ -558,8 +601,8 @@ export default function Game() {
         </div>
 
         <p className="mt-2 min-h-[1rem] text-center text-xs text-gray-400">
-          {phase === "playing" && "הקלידו את המילה לפני שהדמות מגיעה אליה"}
-          {phase === "countdown" && "המשחק מתחיל בקרוב..."}
+          {phase === "playing" && copy.game.playingHint}
+          {phase === "countdown" && copy.game.countdownHint}
         </p>
       </div>
     </div>

@@ -9,7 +9,9 @@ export const router = createBrowserRouter([
     Component: Root,
     children: [
       { index: true, Component: Landing },
+      { path: "en", Component: Landing },
       { path: "game", Component: Game },
+      { path: "en/game", Component: Game },
     ],
   },
 ]);

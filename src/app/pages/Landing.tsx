@@ -1,19 +1,39 @@
 import { motion, AnimatePresence } from "motion/react";
 import { Play, Zap, Leaf, Flame, Monitor } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { RunningCharacter } from "../components/RunningCharacter.tsx";
+import { LanguageToggle } from "../components/LanguageToggle.tsx";
+import {
+  getEquivalentLanguagePath,
+  getGamePath,
+  getLanguageDirection,
+  getLanguageFromPathname,
+  persistLanguage,
+} from "../../lib/language.ts";
+import { translations } from "../../lib/translations.ts";
+import { type Language } from "../../lib/types.ts";
 
 export default function Landing() {
   const [selectedSpeed, setSelectedSpeed] = useState(2);
   const [showMobileWarning, setShowMobileWarning] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const language = getLanguageFromPathname(location.pathname);
+  const dir = getLanguageDirection(language);
+  const copy = translations[language];
+
+  useEffect(() => {
+    document.title = copy.title;
+    document.documentElement.lang = language;
+  }, [copy.title, language]);
 
   const speedLevels = [
     {
       id: 1,
-      name: "מתחיל",
-      wpm: "10 מילים בדקה",
+      difficultyId: copy.difficulties[0].id,
+      name: copy.difficulties[0].name,
+      wpm: copy.difficulties[0].wpm,
       icon: Leaf,
       iconColor: "text-emerald-500",
       activeBg: "bg-emerald-50",
@@ -21,18 +41,20 @@ export default function Landing() {
     },
     {
       id: 2,
-      name: "בינוני",
-      wpm: "25 מילים בדקה",
+      difficultyId: copy.difficulties[1].id,
+      name: copy.difficulties[1].name,
+      wpm: copy.difficulties[1].wpm,
       icon: Flame,
       iconColor: "text-orange-500",
       activeBg: "bg-orange-50",
       activeBorder: "border-orange-400",
-      badge: "מומלץ",
+      badge: copy.difficulties[1].badge,
     },
     {
       id: 3,
-      name: "מהיר",
-      wpm: "50 מילים בדקה",
+      difficultyId: copy.difficulties[2].id,
+      name: copy.difficulties[2].name,
+      wpm: copy.difficulties[2].wpm,
       icon: Zap,
       iconColor: "text-pink-500",
       activeBg: "bg-pink-50",
@@ -40,31 +62,27 @@ export default function Landing() {
     },
   ];
 
-  const floatingWords = [
-    { text: "כיתה", top: "16%", right: "52%", delay: 0 },
-    { text: "חבר", top: "36%", right: "12%", delay: 0.25 },
-    { text: "חלום", top: "55%", right: "42%", delay: 0.5 },
-  ];
+  const floatingWords = copy.landing.floatingWords;
+  const keyboardRows = copy.keyboardRows;
 
-  const keyboardRows = [
-    ["פ", "ם", "ן", "ו", "ט", "א", "ר", "ק", "'", "/"],
-    ["ף", "ך", "ל", "ח", "י", "ע", "כ", "ג", "ד", "ש"],
-    [".", ",", "ץ", "ת", "צ", "מ", "נ", "ה", "ב", "ס", "ז"],
-  ];
+  const handleLanguageChange = (nextLanguage: Language) => {
+    persistLanguage(nextLanguage);
+    navigate(getEquivalentLanguagePath(location.pathname, nextLanguage));
+  };
 
   const handlePlay = () => {
     if (window.matchMedia("(max-width: 768px)").matches) {
       setShowMobileWarning(true);
       return;
     }
-    navigate("/game", {
-      state: { difficulty: speedLevels[selectedSpeed - 1].name },
+    navigate(getGamePath(language), {
+      state: { difficultyId: speedLevels[selectedSpeed - 1].difficultyId },
     });
   };
 
   return (
     <div
-      dir="rtl"
+      dir={dir}
       className="min-h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50"
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -73,7 +91,8 @@ export default function Landing() {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 py-12 lg:py-20">
-        <header className="mb-14">
+        <header className="mb-14 flex items-center justify-between gap-4">
+          <LanguageToggle language={language} onChange={handleLanguageChange} />
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -84,9 +103,10 @@ export default function Landing() {
               <Zap className="h-6 w-6" fill="currentColor" />
             </div>
             <h3 className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-2xl font-bold text-transparent">
-              מִרְדָּף הַמִּלִּים
+              {copy.title}
             </h3>
           </motion.div>
+          <div className="w-[132px]" />
         </header>
 
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
@@ -105,11 +125,11 @@ export default function Landing() {
                 className="text-5xl leading-tight font-bold lg:text-6xl xl:text-7xl"
               >
                 <span className="bg-gradient-to-l from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                  תַּקְלִידוּ בְּעִבְרִית.
+                  {copy.landing.headlineTop}
                 </span>
                 <br />
                 <span className="bg-gradient-to-l from-pink-500 via-rose-500 to-orange-500 bg-clip-text text-transparent">
-                  תָּרוּצוּ קָדִימָה.
+                  {copy.landing.headlineBottom}
                 </span>
               </motion.h1>
 
@@ -119,8 +139,7 @@ export default function Landing() {
                 transition={{ duration: 0.7, delay: 0.4 }}
                 className="max-w-xl text-xl leading-relaxed text-gray-600 lg:text-2xl"
               >
-                משחק הקלדה פשוט וכיפי שעוזר לכם להשתפר בעברית, מילה אחרי מילה.
-                בלי לחץ, רק אתם והמקלדת.
+                {copy.landing.description}
               </motion.p>
             </div>
 
@@ -136,7 +155,7 @@ export default function Landing() {
               >
                 <div className="absolute inset-0 bg-gradient-to-l from-violet-700 to-indigo-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 <span className="relative flex items-center gap-2">
-                  התחילו לשחק
+                  {copy.landing.start}
                   <Play className="h-5 w-5" fill="currentColor" />
                 </span>
               </button>
@@ -150,7 +169,7 @@ export default function Landing() {
               className="space-y-3"
             >
               <p className="text-sm font-semibold tracking-wide text-gray-500">
-                בחרו את הקצב שלכם:
+                {copy.landing.speedPrompt}
               </p>
               <div className="grid grid-cols-3 gap-3">
                 {speedLevels.map((level, index) => {
@@ -164,7 +183,7 @@ export default function Landing() {
                       onClick={() => setSelectedSpeed(level.id)}
                       className="relative cursor-pointer"
                     >
-                      {"badge" in level && isSelected && (
+                      {level.badge && isSelected && (
                         <div className="absolute -top-2.5 left-1/2 z-10 -translate-x-1/2 rounded-full bg-orange-500 px-2.5 py-0.5 text-xs font-bold whitespace-nowrap text-white">
                           {level.badge}
                         </div>
@@ -306,7 +325,9 @@ export default function Landing() {
                     transition={{ duration: 1.1, repeat: Infinity }}
                     className="inline-block h-4 w-0.5 flex-shrink-0 rounded bg-violet-500"
                   />
-                  <span className="text-base text-gray-400">הקלד כאן...</span>
+                  <span className="text-base text-gray-400">
+                    {copy.landing.inputPlaceholder}
+                  </span>
                 </div>
               </div>
 
@@ -352,7 +373,7 @@ export default function Landing() {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
               onClick={(e) => e.stopPropagation()}
-              dir="rtl"
+              dir={dir}
               className="w-full max-w-sm rounded-3xl bg-white p-8 text-center shadow-2xl"
             >
               <div className="mb-5 flex justify-center">
@@ -361,16 +382,16 @@ export default function Landing() {
                 </div>
               </div>
               <h2 className="mb-3 text-2xl font-bold text-gray-900">
-                המשחק פועל במחשב בלבד
+                {copy.landing.mobileTitle}
               </h2>
               <p className="mb-6 leading-relaxed text-gray-500">
-                כדי לשחק צריך מקלדת פיזית. פתחו את המשחק מהמחשב שלכם ותהנו!
+                {copy.landing.mobileDescription}
               </p>
               <button
                 onClick={() => setShowMobileWarning(false)}
                 className="w-full rounded-2xl bg-gradient-to-l from-violet-600 to-indigo-600 py-3 font-bold text-white"
               >
-                הבנתי
+                {copy.landing.mobileButton}
               </button>
             </motion.div>
           </motion.div>

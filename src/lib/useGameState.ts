@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { GAME_DURATION } from "./constants.ts";
 import { makeGroups } from "./words.ts";
-import { type Phase, type FloatingChar } from "./types.ts";
+import { type Phase, type FloatingChar, type Language } from "./types.ts";
 
-export function useGameState(difficulty: string) {
+export function useGameState(difficulty: string, language: Language) {
   const [phase, setPhase] = useState<Phase>("countdown");
   const [countdown, setCountdown] = useState(3);
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
 
-  const [wordGroups, setWordGroups] = useState<string[][]>(() => makeGroups(difficulty));
+  const [wordGroups, setWordGroups] = useState<string[][]>(() => makeGroups(difficulty, language));
   const [groupIdx, setGroupIdx] = useState(0);
   const [groupWordIdx, setGroupWordIdx] = useState(0);
 
@@ -73,11 +73,12 @@ export function useGameState(difficulty: string) {
       e.preventDefault();
 
       const nextExpected = currentWord[inputValue.length];
+      const typedKey = language === "en" ? e.key.toLowerCase() : e.key;
       setTotalTyped((t) => t + 1);
 
-      if (e.key === nextExpected) {
+      if (typedKey === nextExpected) {
         setCorrectTyped((c) => c + 1);
-        const newVal = inputValue + e.key;
+        const newVal = inputValue + typedKey;
         setInputValue(newVal);
 
         if (newVal === currentWord) {
@@ -97,20 +98,20 @@ export function useGameState(difficulty: string) {
       } else {
         const id = Date.now() + Math.random();
         const x = Math.floor(Math.random() * 100 - 50);
-        setFloatingChars((prev) => [...prev, { id, char: e.key, x }]);
+        setFloatingChars((prev) => [...prev, { id, char: typedKey, x }]);
         setTimeout(() => setFloatingChars((prev) => prev.filter((c) => c.id !== id)), 750);
-        setWrongChar(e.key);
+        setWrongChar(typedKey);
         setTimeout(() => setWrongChar(null), 400);
       }
     },
-    [phase, currentWord, currentGroup, groupWordIdx, inputValue],
+    [phase, currentWord, currentGroup, groupWordIdx, inputValue, language],
   );
 
   const handleRestart = useCallback(() => {
     setPhase("countdown");
     setCountdown(3);
     setTimeLeft(GAME_DURATION);
-    setWordGroups(makeGroups(difficulty));
+    setWordGroups(makeGroups(difficulty, language));
     setGroupIdx(0);
     setGroupWordIdx(0);
     setInputValue("");
@@ -121,7 +122,11 @@ export function useGameState(difficulty: string) {
     setJustSucceeded(false);
     setWrongChar(null);
     setFloatingChars([]);
-  }, [difficulty]);
+  }, [difficulty, language]);
+
+  useEffect(() => {
+    handleRestart();
+  }, [handleRestart]);
 
   return {
     phase,
