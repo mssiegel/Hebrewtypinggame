@@ -48,6 +48,28 @@ export function useGameState(difficulty: string, language: Language) {
     if (phase === "playing") inputRef.current?.focus();
   }, [phase]);
 
+  useEffect(() => {
+    if (phase !== "playing") return;
+
+    let frameId: number | null = null;
+    const focusInput = () => {
+      if (frameId !== null) cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(() => {
+        inputRef.current?.focus();
+        frameId = null;
+      });
+    };
+
+    document.addEventListener("pointerdown", focusInput, true);
+    window.addEventListener("focus", focusInput);
+
+    return () => {
+      document.removeEventListener("pointerdown", focusInput, true);
+      window.removeEventListener("focus", focusInput);
+      if (frameId !== null) cancelAnimationFrame(frameId);
+    };
+  }, [phase]);
+
   // Game timer
   useEffect(() => {
     if (phase !== "playing") return;
