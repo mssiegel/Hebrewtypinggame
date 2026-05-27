@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { GAME_DURATION } from "./constants.ts";
+import { getGameKey } from "./keyboardLayout.ts";
 import { makeGroups } from "./words.ts";
 import { type Phase, type FloatingChar, type Language } from "./types.ts";
 
@@ -95,7 +96,7 @@ export function useGameState(difficulty: string, language: Language) {
       e.preventDefault();
 
       const nextExpected = currentWord[inputValue.length];
-      const typedKey = language === "en" ? e.key.toLowerCase() : e.key;
+      const typedKey = getGameKey(e.key, e.code, language);
       setTotalTyped((t) => t + 1);
 
       if (typedKey === nextExpected) {
