@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate, useLocation } from "react-router";
-import { Zap, Home, RotateCcw } from "lucide-react";
+import { Zap, Home, RotateCcw, Leaf, Flame } from "lucide-react";
 import confetti from "canvas-confetti";
 import { RunningCharacter } from "../components/RunningCharacter.tsx";
 import { MiniKeyboard } from "../components/MiniKeyboard.tsx";
@@ -221,10 +221,32 @@ function ResultsOverlay({
   wordsCompleted: number;
   difficulty: DifficultyId;
   language: Language;
-  onRestart: () => void;
+  onRestart: (difficulty: DifficultyId) => void;
   onHome: () => void;
 }) {
   const copy = translations[language].game;
+  const difficulties = translations[language].difficulties;
+  const [restartDifficulty, setRestartDifficulty] =
+    useState<DifficultyId>(difficulty);
+  const difficultyIcons = {
+    easy: Leaf,
+    medium: Flame,
+    hard: Zap,
+  };
+  const difficultyClasses = {
+    easy: {
+      selected: "border-emerald-400 bg-emerald-50 text-emerald-700",
+      icon: "text-emerald-500",
+    },
+    medium: {
+      selected: "border-orange-400 bg-orange-50 text-orange-700",
+      icon: "text-orange-500",
+    },
+    hard: {
+      selected: "border-pink-400 bg-pink-50 text-pink-700",
+      icon: "text-pink-500",
+    },
+  };
   const grade =
     wpm >= 40
       ? copy.grades.exceptional
@@ -325,9 +347,43 @@ function ResultsOverlay({
           </div>
         </div>
 
+        <div className="mb-5 space-y-3 text-start">
+          <p className="text-sm font-semibold text-gray-500">
+            {translations[language].landing.speedPrompt}
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            {difficulties.map((item) => {
+              const Icon = difficultyIcons[item.id];
+              const classes = difficultyClasses[item.id];
+              const isSelected = restartDifficulty === item.id;
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setRestartDifficulty(item.id)}
+                  className={`flex min-h-[84px] flex-col items-center justify-center gap-1.5 rounded-2xl border-2 px-2 py-3 text-center transition-all duration-200 ${
+                    isSelected
+                      ? `${classes.selected} shadow-md`
+                      : "border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:bg-gray-50"
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 ${classes.icon}`} />
+                  <span className="text-sm leading-none font-bold">
+                    {item.name}
+                  </span>
+                  <span className="text-[11px] leading-tight text-gray-400">
+                    {item.wpm}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="flex flex-col gap-3">
           <button
-            onClick={onRestart}
+            onClick={() => onRestart(restartDifficulty)}
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-l from-violet-600 to-indigo-600 px-6 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]"
           >
             <RotateCcw className="h-4 w-4" />
@@ -353,8 +409,10 @@ export default function Game() {
   const language = getLanguageFromPathname(location.pathname);
   const dir = getLanguageDirection(language);
   const copy = translations[language];
-  const difficulty = normalizeDifficultyId(
-    location.state?.difficultyId ?? location.state?.difficulty,
+  const [difficulty, setDifficulty] = useState<DifficultyId>(() =>
+    normalizeDifficultyId(
+      location.state?.difficultyId ?? location.state?.difficulty,
+    ),
   );
   const difficultyLabel =
     copy.difficulties.find((item) => item.id === difficulty)?.name ??
@@ -422,7 +480,10 @@ export default function Game() {
           </button>
 
           <div className="flex flex-wrap items-center justify-end gap-1.5">
-            <LanguageToggle language={language} onChange={handleLanguageChange} />
+            <LanguageToggle
+              language={language}
+              onChange={handleLanguageChange}
+            />
             <div
               className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-bold transition-colors duration-500 ${
                 timeLeft < 10
@@ -545,7 +606,14 @@ export default function Game() {
               wordsCompleted={wordsCompleted}
               difficulty={difficulty}
               language={language}
-              onRestart={handleRestart}
+              onRestart={(nextDifficulty) => {
+                if (nextDifficulty === difficulty) {
+                  handleRestart();
+                  return;
+                }
+
+                setDifficulty(nextDifficulty);
+              }}
               onHome={() => navigate(getHomePath(language))}
             />
           )}
@@ -586,7 +654,9 @@ export default function Game() {
               onChange={() => {}}
               onKeyDown={handleKeyDown}
               disabled={phase !== "playing"}
-              placeholder={phase === "playing" ? copy.game.inputPlaceholder : ""}
+              placeholder={
+                phase === "playing" ? copy.game.inputPlaceholder : ""
+              }
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
